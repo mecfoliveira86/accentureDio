@@ -2,7 +2,7 @@
 
 1. Escreva um código onde temos uma conta bancária que possa realizar as seguintes operações:
 a) Consultar Saldo
-b) consultar cheque especial
+b) Consultar cheque especial
 c) Depositar dinheiro
 d) Sacar dinheiro
 e) Pagar um boleto
@@ -18,17 +18,47 @@ Siga as instruções para implementar
 
 import java.util.Scanner;
 
-public class banco{
-    public static void main(String[] args){
+public class banco {
+    public static void main(String[] args) {
+        
         Scanner sc = new Scanner(System.in);
-        System.out.println("Menu do Banco");
-        System.out.println("Selecione as opções");
-        System.out.println("(1) - Consultar Saldo");
-        System.out.println("(2) - Consultar cheque especial");
-        System.out.println("(3) - Depositar dinheiro");
-        System.out.println("(4) - Sacar dinheiro");
-        System.out.println("(5) - Pagar um boleto");
-        System.out.println("(6) - Consultar cheque especial");
-        System.out.println("(0) - Fechar");
+        
+        boolean evaluator = true;
+        int menu;
+        
+        Account a1 = new Account("Felipe", 550);    
+        
+        do  {
+            System.out.println("\n------------------------------------");
+            System.out.println("Menu do Banco");
+            System.out.println("Selecione as opções");
+            System.out.println("(1) - Consultar Saldo");
+            System.out.println("(2) - Consultar cheque especial");
+            System.out.println("(3) - Depositar dinheiro");
+            System.out.println("(4) - Sacar dinheiro");
+            System.out.println("(5) - Pagar um boleto");
+            System.out.println("(6) - Consultar cheque especial");
+            System.out.println("(0) - Fechar");
+            System.out.println("-----------------------------------");
+            System.out.println("Digite a opção que deseja realizar:");
+            menu = sc.nextInt();
+            
+            System.out.printf("Você escolheu a opção: %s\n1", menu);
+            
+            
+            switch (menu) {
+                case 0 -> evaluator = false;
+                case 1 -> System.out.println("\n" + a1.saldo());
+                case 2 -> System.out.println("\n" + a1.chequeEspecial());
+                case 3 -> {
+                    System.out.println("Qual o valor deseja depositar?");
+                    int deposito = sc.nextInt();
+                    a1.deposit(deposito);
+                }
+                default -> System.out.println("Opção inválida");
+            }
+        } while(evaluator);
+
+        sc.close();
     }
 }
