@@ -12,7 +12,7 @@ Siga as instruções para implementar
 
 -A conta bancária deve ter um limite de cheque especial somado ao saldo da conta;
 -O valor do cheque especial é definido no momento da criação da conta, de acordo com o valor depositado na conta em sua criação;
--Se o valor depositado na criação da cona for de R$ 500,00 ou menos o cheque especial deve ser de R$ 50,00
+-Se o valor depositado na criação da conta for de R$ 500,00 ou menos o cheque especial deve ser de R$ 50,00
 -Para valores acima de R$ 500,00, o cheque especial deve ser de 50% do valor depositado;
 -Caso o limite de cheque especial seja usado, assim que possível a conta deve cobrar uma taxa de 20% do valor usado do cheque especial. */
 
@@ -55,8 +55,21 @@ public class banco {
                     int deposito = sc.nextInt();
                     a1.deposit(deposito);
                 }
+                case 4 -> {
+                    System.out.println("Qual o valor deseja sacar?");
+                    int saque = sc.nextInt();
+                    System.out.println(a1.withdraw(saque));
+                }
+                case 5 -> {
+                    System.out.println("Qual o valor do boleto?");
+                    int boleto = sc.nextInt();
+                    System.out.println(a1.payBill(boleto));
+                }
+                 case 6 -> System.out.println("\n" + a1.chequeEspecial());
+                 case 7 -> System.out.println("\n" + a1.consultSpecialValue());
                 default -> System.out.println("Opção inválida");
             }
+
         } while(evaluator);
 
         sc.close();

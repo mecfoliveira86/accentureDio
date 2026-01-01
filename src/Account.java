@@ -33,7 +33,9 @@ public class Account {
             eval = 1;
         } else if (withdrawValue <= (this.value + this.specialValue)) {
             // Caso 2: Usa o saldo e parte do cheque especial
-            this.value -= withdrawValue; // O saldo ficará negativo, o que é normal em bancos
+            float intermediate = withdrawValue - this.value;
+            this.specialValue -= intermediate;
+            this.value -= withdrawValue - intermediate; 
             eval = 2;
         } else {
             // Caso 3: Não tem dinheiro nem com o limite
@@ -46,5 +48,12 @@ public class Account {
             case 3 -> "Saldo e limite insuficientes para este valor.";
             default -> "Erro inesperado.";
         };
+    }
+
+    public String payBill(float billValue) {
+        return withdraw(billValue);
+    }
+    public String consultSpecialValue() {
+        return "Seu limite de cheque especial é R$ " + specialValue;
     }
 }
