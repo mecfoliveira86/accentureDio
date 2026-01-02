@@ -1,59 +1,73 @@
 public class Account {
-
     private String name;
     private float value;
-    private float specialValue;
+    private float specialLimit;  // Limite total (fixo)
+    private float currentSpecial; // Limite disponível no momento
 
-    // Construtor
-    public Account(String name, float value) { // Alterado para float para ser consistente
+    public Account(String name, float initialValue) {
         this.name = name;
-        this.value = value;
-        // Lógica do cheque especial
-        this.specialValue = (value > 500) ? (value / 2) : 50;
+        this.value = initialValue;
+        // Define o limite total com base na regra do exercício
+        this.specialLimit = (initialValue > 500) ? (initialValue / 2) : 50;
+        // No início, o limite disponível é o limite total
+        this.currentSpecial = this.specialLimit;
     }
 
     public String saldo() {
-        return String.format("Olá %s, seu saldo é de R$ %.2f", name, value);
-    }
-
-    public String chequeEspecial() {
-        return "Seu limite de cheque especial é R$ " + specialValue;
+        return String.format("Olá %s, seu saldo real é R$ %.2f e seu limite disponível é R$ %.2f", 
+                             name, value, currentSpecial);
     }
 
     public void deposit(float depositValue) {
-        this.value += depositValue;
+        float usedAmount = this.specialLimit - this.currentSpecial;
+
+        if (usedAmount > 0) {
+            float fee = usedAmount * 0.20f; // Taxa de 20% sobre o que foi usado
+            System.out.printf("\n>>> Sistema: Cobrando taxa de 20%% pelo uso do cheque (R$ %.2f)\n", fee);
+            depositValue -= fee;
+
+            if (depositValue >= usedAmount) {
+                depositValue -= usedAmount;
+                this.currentSpecial = this.specialLimit; // Quita a dívida do cheque
+                this.value += depositValue; // O que sobra vai para o saldo
+            } else {
+                this.currentSpecial += depositValue; // Abate parte da dívida do cheque
+            }
+        } else {
+            this.value += depositValue;
+        }
+        System.out.println("Depósito processado!");
     }
 
     public String withdraw(float withdrawValue) {
-        int eval;
-        
         if (withdrawValue <= this.value) {
-            // Caso 1: Tem saldo suficiente
             this.value -= withdrawValue;
-            eval = 1;
-        } else if (withdrawValue <= (this.value + this.specialValue)) {
-            // Caso 2: Usa o saldo e parte do cheque especial
-            float intermediate = withdrawValue - this.value;
-            this.specialValue -= intermediate;
-            this.value -= withdrawValue - intermediate; 
-            eval = 2;
+            return "Saque realizado com sucesso do saldo real!";
+        } else if (withdrawValue <= (this.value + this.currentSpecial)) {
+            float missing = withdrawValue - this.value;
+            this.value = 0;
+            this.currentSpecial -= missing;
+            return "Saque realizado utilizando o cheque especial!";
         } else {
-            // Caso 3: Não tem dinheiro nem com o limite
-            eval = 3;
+            return "Saldo e limite insuficientes.";
         }
-
-        return switch (eval) {
-            case 1 -> "Saque realizado! Saldo restante: " + this.value;
-            case 2 -> "Saque realizado usando cheque especial! Saldo atual: " + this.value;
-            case 3 -> "Saldo e limite insuficientes para este valor.";
-            default -> "Erro inesperado.";
-        };
     }
 
     public String payBill(float billValue) {
-        return withdraw(billValue);
+        return withdraw(billValue); // Reutiliza a lógica de saque
     }
+
+    // ITEM B: Consultar valor do cheque
     public String consultSpecialValue() {
-        return "Seu limite de cheque especial é R$ " + specialValue;
+        return String.format("Limite total: R$ %.2f | Disponível: R$ %.2f", specialLimit, currentSpecial);
+    }
+
+    // ITEM F: Verificar se está usando
+    public String checkOverdraftUsage() {
+        if (this.currentSpecial < this.specialLimit) {
+            return "ALERTA: A conta ESTÁ utilizando o cheque especial.";
+        } else {
+            return "A conta NÃO está utilizando o cheque especial.";
+        }
     }
 }
